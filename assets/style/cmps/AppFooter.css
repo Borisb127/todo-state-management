@@ -1,0 +1,37 @@
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    background-color: #333;
+    padding: 8px 0;
+
+    color: white;
+    z-index: 100;
+}
+
+.app-footer .progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.app-footer progress {
+    width: 200px;
+    height: 15px;
+    border-radius: 10px;
+    
+    overflow: hidden;
+}
+
+.app-footer progress::-webkit-progress-bar {
+    background-color: #555;
+    border-radius: 10px;
+}
+
+.app-footer progress::-webkit-progress-value {
+    background-color: #4caf50;
+    border-radius: 10px;
+}

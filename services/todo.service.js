@@ -29,6 +29,14 @@ function query(filterBy = {}) {
                 todos = todos.filter(todo => todo.importance >= filterBy.importance)
             }
 
+            if (filterBy.status && filterBy.status !== 'all') {
+                if (filterBy.status === 'done') {
+                    todos = todos.filter(todo => todo.isDone)
+                } else if (filterBy.status === 'active') {
+                    todos = todos.filter(todo => !todo.isDone)
+                }
+            }
+
             return todos
         })
 }
@@ -58,11 +66,11 @@ function save(todo) {
 }
 
 function getEmptyTodo(txt = '', importance = 5) {
-    return { txt, importance, isDone: false }
+    return { txt, importance, isDone: false, color: '#ffffff' }
 }
 
 function getDefaultFilter() {
-    return { txt: '', importance: 0 }
+    return { txt: '', importance: 0, status: 'all' }
 }
 
 function getFilterFromSearchParams(searchParams) {

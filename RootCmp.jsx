@@ -11,7 +11,9 @@ import { TodoDetails } from "./pages/TodoDetails.jsx"
 import { TodoEdit } from "./pages/TodoEdit.jsx"
 import { AboutTeam } from "./cmps/AboutTeam.jsx"
 import { AboutVision } from "./cmps/AboutVision.jsx"
+import { AppFooter } from "./cmps/AppFooter.jsx"
 import { Dashboard } from "./pages/Dashboard.jsx"
+
 
 export function RootCmp() {
 
@@ -35,6 +37,7 @@ export function RootCmp() {
                             <Route path="/dashboard" element={<Dashboard />} />
                         </Routes>
                     </main>
+                    <AppFooter />
                 </section>
             </Router>
         </Provider>

@@ -13,15 +13,19 @@ const { useSelector, useDispatch } = ReactRedux
 export function TodoIndex() {
 
     // const [todos, setTodos] = useState(null)
+    // const defaultFilter = todoService.getFilterFromSearchParams(searchParams)
+    // const [filterBy, setFilterBy] = useState(defaultFilter)
     const todos = useSelector(state => state.todos)
+    const filterBy = useSelector(state => state.filterBy)
+    const isLoading = useSelector(state => state.isLoading)
     // console.log('store todos:', todos )
+
+    const dispatch = useDispatch()
 
     // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()
 
-    const defaultFilter = todoService.getFilterFromSearchParams(searchParams)
 
-    const [filterBy, setFilterBy] = useState(defaultFilter)
 
     useEffect(() => {
         setSearchParams(filterBy)
@@ -30,9 +34,12 @@ export function TodoIndex() {
                 console.eror('err:', err)
                 showErrorMsg('Cannot load todos')
             })
-    }, [filterBy])
+    }, [filterBy.txt, filterBy.importance, filterBy.status])
+
 
     function onRemoveTodo(todoId) {
+        if (!confirm('Are you sure you want to delete this todo?')) return
+
         removeTodo(todoId)
             .then(() => {
                 showSuccessMsg(`Todo removed`)
@@ -55,20 +62,32 @@ export function TodoIndex() {
             })
     }
 
-    if (!todos) return <div>Loading...</div>
+    function onSetFilterBy(filterBy) {
+        dispatch({ type: 'SET_FILTER_BY', filterBy })
+    }
+
+
+    // if (isLoading) return <div>Loading...</div>
     return (
         <section className="todo-index">
-            <TodoFilter filterBy={filterBy} onSetFilterBy={setFilterBy} />
+            <TodoFilter filterBy={filterBy} onSetFilterBy={onSetFilterBy} />
             <div>
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>
+
             <h2>Todos List</h2>
-            <TodoList todos={todos} onRemoveTodo={onRemoveTodo} onToggleTodo={onToggleTodo} />
-            <hr />
-            <h2>Todos Table</h2>
-            <div style={{ width: '60%', margin: 'auto' }}>
-                <DataTable todos={todos} onRemoveTodo={onRemoveTodo} />
-            </div>
+            {isLoading ? (
+                <div>Loading...</div>
+            ) : (
+                <React.Fragment>
+                    <TodoList todos={todos} onRemoveTodo={onRemoveTodo} onToggleTodo={onToggleTodo} />
+                    <hr />
+                    <h2>Todos Table</h2>
+                    <div style={{ width: '60%', margin: 'auto' }}>
+                        <DataTable todos={todos} onRemoveTodo={onRemoveTodo} />
+                    </div>
+                </React.Fragment>
+            )}
         </section>
     )
 }

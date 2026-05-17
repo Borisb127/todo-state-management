@@ -1,31 +1,40 @@
 const { useState } = React
 const { Link, NavLink } = ReactRouterDOM
 const { useNavigate } = ReactRouter
+const { useSelector } = ReactRedux
 
 import { userService } from '../services/user.service.js'
-import { UserMsg } from "./UserMsg.jsx"
-import { LoginSignup } from './LoginSignup.jsx'
 import { showErrorMsg } from '../services/event-bus.service.js'
 
+import { UserMsg } from "./UserMsg.jsx"
+import { LoginSignup } from './LoginSignup.jsx'
+
+import { userLogout } from '../store/actions/user-actions.js'
 
 export function AppHeader() {
     const navigate = useNavigate()
-    const [user, setUser] = useState(userService.getLoggedinUser())
-    
+    const user = useSelector(state => state.loggedinUser)
+    const todos = useSelector(state => state.todos)
+    const doneTodos = todos.filter(todo => todo.isDone).length
+    const totalTodos = todos.length
+    // const [user, setUser] = useState(userService.getLoggedinUser())
+
     function onLogout() {
-        userService.logout()
+        userLogout()
             .then(() => {
-                onSetUser(null)
+                navigate('/')
             })
             .catch((err) => {
                 showErrorMsg('OOPs try again')
             })
     }
 
-    function onSetUser(user) {
-        setUser(user)
-        navigate('/')
-    }
+    // function onSetUser(user) {
+    //     setUser(user)
+    //     navigate('/')
+    // }
+
+
     return (
         <header className="app-header full main-layout">
             <section className="header-container">
@@ -37,7 +46,7 @@ export function AppHeader() {
                     </ section >
                 ) : (
                     <section>
-                        <LoginSignup onSetUser={onSetUser} />
+                        <LoginSignup />
                     </section>
                 )}
                 <nav className="app-nav">
@@ -47,7 +56,8 @@ export function AppHeader() {
                     <NavLink to="/dashboard" >Dashboard</NavLink>
                 </nav>
             </section>
-            <UserMsg />
+           <UserMsg />
         </header>
+
     )
 }
