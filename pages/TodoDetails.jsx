@@ -1,7 +1,9 @@
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg } from "../services/event-bus.service.js"
+import { saveTodo } from '../store/actions/todo-actions.js'
 
 const { useState, useEffect } = React
+const { useSelector, useDispatch } = ReactRedux
 const { useParams, useNavigate, Link } = ReactRouterDOM
 
 export function TodoDetails() {
@@ -9,11 +11,24 @@ export function TodoDetails() {
     const [todo, setTodo] = useState(null)
     const params = useParams()
     const navigate = useNavigate()
+    const user = useSelector(state => state.loggedinUser)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         loadTodo()
     }, [params.todoId])
 
+    function onToggleTodo() {
+        const todoToSave = { ...todo, isDone: !todo.isDone }
+        saveTodo(todoToSave)
+            .then((savedTodo) => {
+                setTodo(savedTodo)
+                if (!todo.isDone && user) {
+                    dispatch({ type: 'SET_USER_BALANCE', balance: user.balance + 10 })
+                }
+            })
+            .catch(err => console.log('err:', err))
+    }
 
     function loadTodo() {
         todoService.get(params.todoId)
@@ -34,8 +49,11 @@ export function TodoDetails() {
     if (!todo) return <div>Loading...</div>
     return (
         <section className="todo-details">
-            <h1 className={(todo.isDone)? 'done' : ''}>{todo.txt}</h1>
-            <h2>{(todo.isDone)? 'Done!' : 'In your list'}</h2>
+            <h1 className={(todo.isDone) ? 'done' : ''}>{todo.txt}</h1>
+            <h2>{(todo.isDone) ? 'Done!' : 'In your list'}</h2>
+            <button onClick={onToggleTodo}>
+                {todo.isDone ? 'Mark as Undone' : 'Mark as Done'}
+            </button>
 
             <h1>Todo importance: {todo.importance}</h1>
             <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Enim rem accusantium, itaque ut voluptates quo? Vitae animi maiores nisi, assumenda molestias odit provident quaerat accusamus, reprehenderit impedit, possimus est ad?</p>

@@ -16,6 +16,7 @@ export const UPDATE_TODO = 'UPDATE_TODO'
 export const SET_FILTER_BY = 'SET_FILTER_BY'
 
 export const SET_USER = 'SET_USER'
+export const SET_USER_BALANCE = 'SET_USER_BALANCE'
 
 export const SET_IS_LOADING = 'SET_IS_LOADING'
 
@@ -46,10 +47,13 @@ function appReducer(state = initialState, cmd) {
         case SET_USER:
             return { ...state, loggedinUser: cmd.loggedinUser }
 
+        case SET_USER_BALANCE:
+            const loggedinUser = { ...state.loggedinUser, balance: cmd.balance }
+            sessionStorage.setItem('user', JSON.stringify(loggedinUser))
+            return { ...state, loggedinUser }
 
         case SET_IS_LOADING:
             return { ...state, isLoading: cmd.isLoading }
-
         default:
             return state
     }

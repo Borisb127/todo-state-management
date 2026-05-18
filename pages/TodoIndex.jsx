@@ -4,7 +4,7 @@ import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { loadTodos, removeTodo, saveTodo } from '../store/actions/todo-actions.js'
-
+import { userService } from '../services/user.service.js'
 
 const { useState, useEffect } = React
 const { Link, useSearchParams } = ReactRouterDOM
@@ -15,6 +15,8 @@ export function TodoIndex() {
     // const [todos, setTodos] = useState(null)
     // const defaultFilter = todoService.getFilterFromSearchParams(searchParams)
     // const [filterBy, setFilterBy] = useState(defaultFilter)
+    const user = useSelector(state => state.loggedinUser)
+
     const todos = useSelector(state => state.todos)
     const filterBy = useSelector(state => state.filterBy)
     const isLoading = useSelector(state => state.isLoading)
@@ -55,6 +57,13 @@ export function TodoIndex() {
         saveTodo(todoToSave)
             .then(() => {
                 showSuccessMsg(`Todo is ${(!todo.isDone) ? 'done' : 'back on your list'}`)
+                if (!todo.isDone && user) {
+                    userService.updateBalance(user._id, 10)
+                        .then(updatedUser => {
+                            dispatch({ type: 'SET_USER_BALANCE', balance: updatedUser.balance })
+                        })
+                        .catch(err => console.log('Balance update error:', err))
+                }
             })
             .catch(err => {
                 console.log('err:', err)
@@ -80,6 +89,7 @@ export function TodoIndex() {
                 <div>Loading...</div>
             ) : (
                 <React.Fragment>
+                    {todos.length === 0 && <div>No todos to show...</div>}
                     <TodoList todos={todos} onRemoveTodo={onRemoveTodo} onToggleTodo={onToggleTodo} />
                     <hr />
                     <h2>Todos Table</h2>

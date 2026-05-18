@@ -41,7 +41,7 @@ export function AppHeader() {
                 <h1>React Todo App</h1>
                 {user ? (
                     < section >
-                        <Link to={`/user/${user._id}`}>Hello {user.fullname}</Link>
+                        <Link to={`/user/${user._id}`}>Hello {user.fullname} | Balance: ${user.balance}</Link>
                         <button onClick={onLogout}>Logout</button>
                     </ section >
                 ) : (
@@ -56,7 +56,7 @@ export function AppHeader() {
                     <NavLink to="/dashboard" >Dashboard</NavLink>
                 </nav>
             </section>
-           <UserMsg />
+            <UserMsg />
         </header>
 
     )
