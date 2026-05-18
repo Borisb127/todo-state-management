@@ -1,4 +1,5 @@
 import { todoService } from "../services/todo.service.js"
+import { userService } from '../services/user.service.js'
 import { showErrorMsg } from "../services/event-bus.service.js"
 import { saveTodo } from '../store/actions/todo-actions.js'
 
@@ -24,7 +25,14 @@ export function TodoDetails() {
             .then((savedTodo) => {
                 setTodo(savedTodo)
                 if (!todo.isDone && user) {
-                    dispatch({ type: 'SET_USER_BALANCE', balance: user.balance + 10 })
+                    userService.updateBalance(user._id, 10)
+                        .then(() => {
+                            return userService.addActivity(user._id, 'Completed: ' + todo.txt)
+                        })
+                        .then(updatedUser => {
+                            dispatch({ type: 'SET_USER', loggedinUser: updatedUser })
+                        })
+                        .catch(err => console.log('Error:', err))
                 }
             })
             .catch(err => console.log('err:', err))
