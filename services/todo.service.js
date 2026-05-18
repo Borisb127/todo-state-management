@@ -37,6 +37,22 @@ function query(filterBy = {}) {
                 }
             }
 
+            if (filterBy.sortBy) {
+                if (filterBy.sortBy === 'txt') {
+                    todos.sort((a, b) => a.txt.localeCompare(b.txt))
+                } else if (filterBy.sortBy === 'importance') {
+                    todos.sort((a, b) => b.importance - a.importance)
+                } else if (filterBy.sortBy === 'createdAt') {
+                    todos.sort((a, b) => b.createdAt - a.createdAt)
+                }
+            }
+
+            if (filterBy.pageIdx !== undefined && filterBy.pageIdx !== '') {
+                const PAGE_SIZE = 6
+                const startIdx = filterBy.pageIdx * PAGE_SIZE
+                todos = todos.slice(startIdx, startIdx + PAGE_SIZE)
+            }
+
             return todos
         })
 }
@@ -70,7 +86,7 @@ function getEmptyTodo(txt = '', importance = 5) {
 }
 
 function getDefaultFilter() {
-    return { txt: '', importance: 0, status: 'all' }
+    return { txt: '', importance: 0, status: 'all', sortBy: '', pageIdx: 0 }
 }
 
 function getFilterFromSearchParams(searchParams) {

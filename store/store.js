@@ -3,7 +3,7 @@ import { userService } from '../services/user.service.js'
 
 const initialState = {
     todos: [],
-    filterBy: { txt: '', importance: 0, status: 'all' },
+    filterBy: { txt: '', importance: 0, status: 'all', sortBy: '', pageIdx: 0 },
     isLoading: false,
     loggedinUser: userService.getLoggedinUser(),
 }

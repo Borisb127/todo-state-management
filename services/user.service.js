@@ -10,8 +10,10 @@ export const userService = {
     query,
     getEmptyCredentials,
     updateBalance,
-
+    updateUser,
+    addActivity,
 }
+
 const STORAGE_KEY_LOGGEDIN = 'user'
 const STORAGE_KEY = 'userDB'
 
@@ -50,7 +52,16 @@ function getLoggedinUser() {
 }
 
 function _setLoggedinUser(user) {
-    const userToSave = { _id: user._id, fullname: user.fullname, balance: user.balance || 10000 }
+    const userToSave = {
+        _id: user._id,
+        fullname: user.fullname,
+        balance: user.balance || 10000,
+        prefs: user.prefs || {
+            color: '#000000',
+            bgColor: '#ffffff'
+        },
+        activities: user.activities || []
+    }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN, JSON.stringify(userToSave))
     return userToSave
 }
@@ -73,6 +84,23 @@ function updateBalance(userId, amount) {
             return _setLoggedinUser(user)
         })
 }
+
+function updateUser(user) {
+    return storageService.put(STORAGE_KEY, user)
+        .then(_setLoggedinUser)
+}
+
+
+function addActivity(userId, txt) {
+    return storageService.get(STORAGE_KEY, userId)
+        .then(user => {
+            if (!user.activities) user.activities = []
+            user.activities.unshift({ txt, at: Date.now() })
+            return storageService.put(STORAGE_KEY, user)
+        })
+        .then(_setLoggedinUser)
+}
+
 
 // signup({username: 'muki', password: 'muki1', fullname: 'Muki Ja'})
 // login({username: 'muki', password: 'muki1'})

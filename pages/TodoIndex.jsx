@@ -36,8 +36,13 @@ export function TodoIndex() {
                 console.eror('err:', err)
                 showErrorMsg('Cannot load todos')
             })
-    }, [filterBy.txt, filterBy.importance, filterBy.status])
-
+    }, [
+        filterBy.txt,
+        filterBy.importance,
+        filterBy.status,
+        filterBy.sortBy,
+        filterBy.pageIdx
+    ])
 
     function onRemoveTodo(todoId) {
         if (!confirm('Are you sure you want to delete this todo?')) return
@@ -59,10 +64,13 @@ export function TodoIndex() {
                 showSuccessMsg(`Todo is ${(!todo.isDone) ? 'done' : 'back on your list'}`)
                 if (!todo.isDone && user) {
                     userService.updateBalance(user._id, 10)
-                        .then(updatedUser => {
-                            dispatch({ type: 'SET_USER_BALANCE', balance: updatedUser.balance })
+                        .then(() => {
+                            return userService.addActivity(user._id, 'Completed: ' + todo.txt)
                         })
-                        .catch(err => console.log('Balance update error:', err))
+                        .then(updatedUser => {
+                            dispatch({ type: 'SET_USER', loggedinUser: updatedUser })
+                        })
+                        .catch(err => console.log('Error:', err))
                 }
             })
             .catch(err => {

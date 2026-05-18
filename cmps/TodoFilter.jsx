@@ -6,7 +6,11 @@ export function TodoFilter({ filterBy, onSetFilterBy }) {
 
     useEffect(() => {
         // Notify parent
-        onSetFilterBy(filterByToEdit)
+        const timeout = setTimeout(() => {
+            onSetFilterBy(filterByToEdit)
+        }, 1000)
+
+        return () => clearTimeout(timeout)
     }, [filterByToEdit])
 
     function handleChange({ target }) {
@@ -35,7 +39,7 @@ export function TodoFilter({ filterBy, onSetFilterBy }) {
         onSetFilterBy(filterByToEdit)
     }
 
-    const { txt, importance, status } = filterByToEdit
+    const { txt, importance, status, sortBy } = filterByToEdit
 
     return (
         <section className="todo-filter">
@@ -55,6 +59,16 @@ export function TodoFilter({ filterBy, onSetFilterBy }) {
                     <option value="active">Active</option>
                     <option value="done">Done</option>
                 </select>
+
+
+                <label htmlFor="sortBy">Sort: </label>
+                <select name="sortBy" id="sortBy" value={sortBy} onChange={handleChange}>
+                    <option value="">None</option>
+                    <option value="txt">Text</option>
+                    <option value="importance">Importance</option>
+                    <option value="createdAt">Date</option>
+                </select>
+
 
                 <button hidden>Set Filter</button>
             </form>
