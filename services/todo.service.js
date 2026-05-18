@@ -86,7 +86,7 @@ function getEmptyTodo(txt = '', importance = 5) {
 }
 
 function getDefaultFilter() {
-    return { txt: '', importance: 0, status: 'all', sortBy: '', pageIdx: 0 }
+    return { txt: '', importance: 0, status: 'all', sortBy: '', pageIdx: '' }
 }
 
 function getFilterFromSearchParams(searchParams) {
