@@ -2,6 +2,8 @@ import { utilService } from './util.service.js'
 import { storageService } from './async-storage.service.js'
 
 const TODO_KEY = 'todoDB'
+const PAGE_SIZE = 6
+
 _createTodos()
 
 export const todoService = {
@@ -13,6 +15,9 @@ export const todoService = {
     getDefaultFilter,
     getFilterFromSearchParams,
     getImportanceStats,
+    getTodoStats,
+    getMaxPage,
+
 }
 // For Debug (easy access from console):
 window.cs = todoService
@@ -47,14 +52,36 @@ function query(filterBy = {}) {
                 }
             }
 
+            const filteredTodosLength = todos.length
+
             if (filterBy.pageIdx !== undefined && filterBy.pageIdx !== '') {
-                const PAGE_SIZE = 6
                 const startIdx = filterBy.pageIdx * PAGE_SIZE
                 todos = todos.slice(startIdx, startIdx + PAGE_SIZE)
             }
 
-            return todos
+            return Promise.all([getTodoStats(), getMaxPage(filteredTodosLength)])
+                .then(([todosStats, maxPage]) => {
+                    return { todos, maxPage, todosStats }
+                })
         })
+}
+
+function getTodoStats() {
+    return storageService.query(TODO_KEY)
+        .then(todos => {
+            const doneTodosCount = todos.reduce((acc, todo) => {
+                if (todo.isDone) acc++
+                return acc
+            }, 0)
+            return { doneTodosCount, totalTodos: todos.length }
+        })
+}
+
+function getMaxPage(filteredTodosLength) {
+    if (filteredTodosLength)
+        return Promise.resolve(Math.ceil(filteredTodosLength / PAGE_SIZE))
+    return storageService.query(TODO_KEY)
+        .then(todos => Math.ceil(todos.length / PAGE_SIZE))
 }
 
 function get(todoId) {

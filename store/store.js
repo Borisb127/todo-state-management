@@ -6,12 +6,17 @@ const initialState = {
     filterBy: { txt: '', importance: 0, status: 'all', sortBy: '', pageIdx: '' },
     isLoading: false,
     loggedinUser: userService.getLoggedinUser(),
+    doneTodos: 0,
+    totalTodos: 0,
+    maxPage: null,
 }
 
 export const SET_TODOS = 'SET_TODOS'
 export const REMOVE_TODO = 'REMOVE_TODO'
 export const ADD_TODO = 'ADD_TODO'
 export const UPDATE_TODO = 'UPDATE_TODO'
+export const SET_TODOS_STATS = 'SET_TODOS_STATS'
+export const SET_MAX_PAGE = 'SET_MAX_PAGE'
 
 export const SET_FILTER_BY = 'SET_FILTER_BY'
 
@@ -40,6 +45,12 @@ function appReducer(state = initialState, cmd) {
         case UPDATE_TODO:
             var todos = state.todos.map(todo => todo._id === cmd.todo._id ? cmd.todo : todo)
             return { ...state, todos }
+
+        case SET_TODOS_STATS:
+            return { ...state, doneTodos: cmd.doneTodos, totalTodos: cmd.totalTodos }
+
+        case SET_MAX_PAGE:
+            return { ...state, maxPage: cmd.maxPage }
 
         case SET_FILTER_BY:
             return { ...state, filterBy: cmd.filterBy }

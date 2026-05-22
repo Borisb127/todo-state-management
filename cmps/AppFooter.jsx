@@ -1,12 +1,16 @@
 const { useSelector, useDispatch } = ReactRedux
 
 export function AppFooter() {
-    const todos = useSelector(state => state.todos)
     const filterBy = useSelector(state => state.filterBy)
     const dispatch = useDispatch()
+    const maxPage = useSelector(state => state.maxPage)
 
-    const doneTodos = todos.filter(todo => todo.isDone).length
-    const totalTodos = todos.length
+    const doneTodos = useSelector(state => state.doneTodos)
+    const totalTodos = useSelector(state => state.totalTodos)
+    // const todos = useSelector(state => state.todos)
+    // const doneTodos = todos.filter(todo => todo.isDone).length
+    // const totalTodos = todos.length
+
 
     function onChangePage(diff) {
         dispatch({ type: 'SET_FILTER_BY', filterBy: { ...filterBy, pageIdx: filterBy.pageIdx + diff } })
@@ -33,7 +37,7 @@ export function AppFooter() {
                         <span> Page {filterBy.pageIdx + 1} </span>
 
                         <button
-                            disabled={todos.length === 0}
+                            disabled={filterBy.pageIdx >= maxPage - 1}
                             onClick={() => onChangePage(1)}>
                             Next
                         </button>
