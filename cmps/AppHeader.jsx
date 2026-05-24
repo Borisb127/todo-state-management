@@ -14,9 +14,7 @@ import { userLogout } from '../store/actions/user-actions.js'
 export function AppHeader() {
     const navigate = useNavigate()
     const user = useSelector(state => state.loggedinUser)
-    const todos = useSelector(state => state.todos)
-    const doneTodos = todos.filter(todo => todo.isDone).length
-    const totalTodos = todos.length
+
     // const [user, setUser] = useState(userService.getLoggedinUser())
 
     function onLogout() {

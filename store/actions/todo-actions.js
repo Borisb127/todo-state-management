@@ -1,4 +1,5 @@
 import { todoService } from '../../services/todo.service.js'
+import { addActivity, updateBalance } from './user-actions.js'
 import { store, SET_TODOS, REMOVE_TODO, ADD_TODO, UPDATE_TODO, SET_IS_LOADING, SET_MAX_PAGE, SET_TODOS_STATS } from '../store.js'
 
 
@@ -28,14 +29,26 @@ export function removeTodo(todoId) {
         })
 }
 
-export function saveTodo(todo) {
+export function saveTodo(todo, isToggle = false) {
     const type = todo._id ? UPDATE_TODO : ADD_TODO
     return todoService.save(todo)
         .then(savedTodo => {
             store.dispatch({ type, todo: savedTodo })
             return todoService.getTodoStats()
                 .then(todosStats => {
-                    store.dispatch({ type: SET_TODOS_STATS, doneTodos: todosStats.doneTodosCount, totalTodos: todosStats.totalTodos })
+                    store.dispatch({
+                        type: SET_TODOS_STATS,
+                        doneTodos: todosStats.doneTodosCount,
+                        totalTodos: todosStats.totalTodos
+                    })
+                    const user = store.getState().loggedinUser
+                    if (user) {
+                        const actionName = todo._id ? 'Updated' : 'Added'
+                        addActivity(user._id, `${actionName} a Todo: ${todo.txt}`)
+                        if (isToggle && todo.isDone) {
+                            updateBalance(user._id, 10)
+                        }
+                    }
                     return savedTodo
                 })
         })
@@ -43,4 +56,8 @@ export function saveTodo(todo) {
             console.error('Cannot save todo:', err)
             throw err
         })
+}
+
+export function getStats(state) {
+    return { total: state.totalTodos, done: state.doneTodos }
 }

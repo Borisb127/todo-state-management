@@ -1,10 +1,10 @@
 import { todoService } from "../services/todo.service.js"
-import { userService } from '../services/user.service.js'
+// import { userService } from '../services/user.service.js'
 import { showErrorMsg } from "../services/event-bus.service.js"
 import { saveTodo } from '../store/actions/todo-actions.js'
 
 const { useState, useEffect } = React
-const { useSelector, useDispatch } = ReactRedux
+// const { useSelector } = ReactRedux
 const { useParams, useNavigate, Link } = ReactRouterDOM
 
 export function TodoDetails() {
@@ -12,8 +12,8 @@ export function TodoDetails() {
     const [todo, setTodo] = useState(null)
     const params = useParams()
     const navigate = useNavigate()
-    const user = useSelector(state => state.loggedinUser)
-    const dispatch = useDispatch()
+    // const user = useSelector(state => state.loggedinUser)
+    // const dispatch = useDispatch()
 
     useEffect(() => {
         loadTodo()
@@ -21,19 +21,9 @@ export function TodoDetails() {
 
     function onToggleTodo() {
         const todoToSave = { ...todo, isDone: !todo.isDone }
-        saveTodo(todoToSave)
+        saveTodo(todoToSave, true)
             .then((savedTodo) => {
                 setTodo(savedTodo)
-                if (!todo.isDone && user) {
-                    userService.updateBalance(user._id, 10)
-                        .then(() => {
-                            return userService.addActivity(user._id, 'Completed: ' + todo.txt)
-                        })
-                        .then(updatedUser => {
-                            dispatch({ type: 'SET_USER', loggedinUser: updatedUser })
-                        })
-                        .catch(err => console.log('Error:', err))
-                }
             })
             .catch(err => console.log('err:', err))
     }

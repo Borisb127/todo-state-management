@@ -1,0 +1,23 @@
+.progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.progress progress {
+    width: 200px;
+    height: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress progress::-webkit-progress-bar {
+    background-color: #555;
+    border-radius: 10px;
+}
+
+.progress progress::-webkit-progress-value {
+    background-color: #4caf50;
+    border-radius: 10px;
+}

@@ -30,3 +30,24 @@ export function userLogout() {
         })
 }
 
+export function addActivity(userId, txt) {
+    return userService.addActivity(userId, txt)
+        .then(updatedUser => {
+            store.dispatch({ type: SET_USER, loggedinUser: updatedUser })
+        })
+        .catch(err => {
+            console.error('Cannot add activity:', err)
+            throw err
+        })
+}
+
+export function updateBalance(userId, amount) {
+    return userService.updateBalance(userId, amount)
+        .then(updatedUser => {
+            store.dispatch({ type: SET_USER, loggedinUser: updatedUser })
+        })
+        .catch(err => {
+            console.error('Cannot update balance:', err)
+            throw err
+        })
+}

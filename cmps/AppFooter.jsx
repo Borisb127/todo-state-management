@@ -1,12 +1,14 @@
 const { useSelector, useDispatch } = ReactRedux
 
+import { Progress } from './Progress.jsx'
+import { getStats } from '../store/actions/todo-actions.js'
+
 export function AppFooter() {
     const filterBy = useSelector(state => state.filterBy)
     const dispatch = useDispatch()
     const maxPage = useSelector(state => state.maxPage)
 
-    const doneTodos = useSelector(state => state.doneTodos)
-    const totalTodos = useSelector(state => state.totalTodos)
+    const { total, done } = useSelector(getStats)
     // const todos = useSelector(state => state.todos)
     // const doneTodos = todos.filter(todo => todo.isDone).length
     // const totalTodos = todos.length
@@ -18,11 +20,7 @@ export function AppFooter() {
 
     return (
         <footer className="app-footer">
-            <div className="progress-bar">
-                <span>{doneTodos}/{totalTodos} done</span>
-                <progress value={doneTodos} max={totalTodos}></progress>
-            </div>
-
+            <Progress />
             <div className="paging">
                 {filterBy.pageIdx !== '' && filterBy.pageIdx !== undefined ? (
                     <React.Fragment>

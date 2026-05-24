@@ -4,7 +4,7 @@ import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { loadTodos, removeTodo, saveTodo } from '../store/actions/todo-actions.js'
-import { userService } from '../services/user.service.js'
+// import { userService } from '../services/user.service.js'
 
 const { useState, useEffect } = React
 const { Link, useSearchParams } = ReactRouterDOM
@@ -15,7 +15,7 @@ export function TodoIndex() {
     // const [todos, setTodos] = useState(null)
     // const defaultFilter = todoService.getFilterFromSearchParams(searchParams)
     // const [filterBy, setFilterBy] = useState(defaultFilter)
-    const user = useSelector(state => state.loggedinUser)
+    // const user = useSelector(state => state.loggedinUser)
 
     const todos = useSelector(state => state.todos)
     const filterBy = useSelector(state => state.filterBy)
@@ -59,19 +59,9 @@ export function TodoIndex() {
 
     function onToggleTodo(todo) {
         const todoToSave = { ...todo, isDone: !todo.isDone }
-        saveTodo(todoToSave)
+        saveTodo(todoToSave, true)
             .then(() => {
                 showSuccessMsg(`Todo is ${(!todo.isDone) ? 'done' : 'back on your list'}`)
-                if (!todo.isDone && user) {
-                    userService.updateBalance(user._id, 10)
-                        .then(() => {
-                            return userService.addActivity(user._id, 'Completed: ' + todo.txt)
-                        })
-                        .then(updatedUser => {
-                            dispatch({ type: 'SET_USER', loggedinUser: updatedUser })
-                        })
-                        .catch(err => console.log('Error:', err))
-                }
             })
             .catch(err => {
                 console.log('err:', err)
