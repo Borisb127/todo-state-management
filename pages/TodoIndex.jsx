@@ -69,15 +69,15 @@ export function TodoIndex() {
             })
     }
 
-    function onSetFilterBy(filterBy) {
-        dispatch({ type: 'SET_FILTER_BY', filterBy })
-    }
+    // function onSetFilterBy(filterBy) {
+    //     dispatch({ type: 'SET_FILTER_BY', filterBy })
+    // }
 
 
     // if (isLoading) return <div>Loading...</div>
     return (
         <section className="todo-index">
-            <TodoFilter filterBy={filterBy} onSetFilterBy={onSetFilterBy} />
+            <TodoFilter />
             <div>
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>

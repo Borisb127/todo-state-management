@@ -1,17 +1,26 @@
-const { useState, useEffect } = React
+import { utilService } from '../services/util.service.js'
+import { SET_FILTER_BY } from '../store/store.js'
 
-export function TodoFilter({ filterBy, onSetFilterBy }) {
+const { useState, useEffect, useRef } = React
+const { useSelector, useDispatch } = ReactRedux
+
+
+export function TodoFilter() {
+
+    const filterBy = useSelector(state => state.filterBy)
+    const dispatch = useDispatch()
 
     const [filterByToEdit, setFilterByToEdit] = useState({ ...filterBy })
+    const debouncedSetFilter = useRef(utilService.debounce((newFilter) =>
+        dispatch({ type: SET_FILTER_BY, filterBy: newFilter }), 500))
+
 
     useEffect(() => {
-        // Notify parent
-        const timeout = setTimeout(() => {
-            onSetFilterBy(filterByToEdit)
-        }, 1000)
+        console.log('useEffect fired:', filterByToEdit)
 
-        return () => clearTimeout(timeout)
+        debouncedSetFilter.current(filterByToEdit)
     }, [filterByToEdit])
+
 
     function handleChange({ target }) {
         const field = target.name
@@ -29,22 +38,16 @@ export function TodoFilter({ filterBy, onSetFilterBy }) {
 
             default: break
         }
-
         setFilterByToEdit(prevFilter => ({ ...prevFilter, [field]: value }))
     }
 
-    // Optional support for LAZY Filtering with a button
-    function onSubmitFilter(ev) {
-        ev.preventDefault()
-        onSetFilterBy(filterByToEdit)
-    }
 
     const { txt, importance, status, sortBy } = filterByToEdit
 
     return (
         <section className="todo-filter">
             <h2>Filter Todos</h2>
-            <form onSubmit={onSubmitFilter}>
+            <form>
                 <input value={txt} onChange={handleChange}
                     type="search" placeholder="By Txt" id="txt" name="txt"
                 />
