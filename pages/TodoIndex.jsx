@@ -8,7 +8,7 @@ import { loadTodos, removeTodo, saveTodo } from '../store/actions/todo-actions.j
 
 const { useState, useEffect } = React
 const { Link, useSearchParams } = ReactRouterDOM
-const { useSelector, useDispatch } = ReactRedux
+const { useSelector } = ReactRedux
 
 export function TodoIndex() {
 
@@ -17,12 +17,10 @@ export function TodoIndex() {
     // const [filterBy, setFilterBy] = useState(defaultFilter)
     // const user = useSelector(state => state.loggedinUser)
 
-    const todos = useSelector(state => state.todos)
-    const filterBy = useSelector(state => state.filterBy)
-    const isLoading = useSelector(state => state.isLoading)
+    const todos = useSelector(state => state.todoModule.todos)
+    const filterBy = useSelector(state => state.todoModule.filterBy)
+    const isLoading = useSelector(state => state.todoModule.isLoading)
     // console.log('store todos:', todos )
-
-    const dispatch = useDispatch()
 
     // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()

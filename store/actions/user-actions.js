@@ -1,5 +1,7 @@
 import { userService } from '../../services/user.service.js'
-import { store, SET_USER } from '../store.js'
+import { store } from '../store.js'
+import { SET_USER } from '../reducers/user.reducer.js'
+
 
 export function userLogin(credentials) {
     console.log('login credentials:', credentials)
@@ -27,6 +29,17 @@ export function userLogout() {
     return userService.logout()
         .then(() => {
             store.dispatch({ type: SET_USER, loggedinUser: null })
+        })
+}
+
+export function updateUser(userToUpdate) {
+    return userService.updateUser(userToUpdate)
+        .then(updatedUser => {
+            store.dispatch({ type: SET_USER, loggedinUser: updatedUser })
+        })
+        .catch(err => {
+            console.error('Cannot update user:', err)
+            throw err
         })
 }
 

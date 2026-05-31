@@ -1,22 +1,19 @@
 const { useState } = React
-const { useSelector, useDispatch } = ReactRedux
+const { useSelector } = ReactRedux
 
-import { userService } from '../services/user.service.js'
+
+import { updateUser } from '../store/actions/user-actions.js'
 
 export function UserDetails() {
-    const user = useSelector(state => state.loggedinUser)
+    const user = useSelector(state => state.userModule.loggedinUser)
     const [fullname, setFullname] = useState(user ? user.fullname : '')
     const [color, setColor] = useState(user && user.prefs ? user.prefs.color : '#000000')
     const [bgColor, setBgColor] = useState(user && user.prefs ? user.prefs.bgColor : '#ffffff')
-    const dispatch = useDispatch()
 
 
     function onSave() {
         const updatedUser = { ...user, fullname, prefs: { color, bgColor } }
-        userService.updateUser(updatedUser)
-            .then(savedUser => {
-                dispatch({ type: 'SET_USER', loggedinUser: savedUser })
-            })
+        updateUser(updatedUser)
     }
 
 

@@ -1,6 +1,7 @@
 import { todoService } from '../../services/todo.service.js'
 import { addActivity, updateBalance } from './user-actions.js'
-import { store, SET_TODOS, REMOVE_TODO, ADD_TODO, UPDATE_TODO, SET_IS_LOADING, SET_MAX_PAGE, SET_TODOS_STATS } from '../store.js'
+import { store } from '../store.js'
+import { SET_TODOS, REMOVE_TODO, ADD_TODO, UPDATE_TODO, SET_IS_LOADING, SET_MAX_PAGE, SET_TODOS_STATS } from '../reducers/todo.reducer.js'
 
 
 export function loadTodos(filterBy = {}) {
@@ -41,7 +42,8 @@ export function saveTodo(todo, isToggle = false) {
                         doneTodos: todosStats.doneTodosCount,
                         totalTodos: todosStats.totalTodos
                     })
-                    const user = store.getState().loggedinUser
+                    const user = store.getState().userModule.loggedinUser
+
                     if (user) {
                         const actionName = todo._id ? 'Updated' : 'Added'
                         addActivity(user._id, `${actionName} a Todo: ${todo.txt}`)
@@ -59,5 +61,8 @@ export function saveTodo(todo, isToggle = false) {
 }
 
 export function getStats(state) {
-    return { total: state.totalTodos, done: state.doneTodos }
+    return {
+        total: state.todoModule.totalTodos,
+        done: state.todoModule.doneTodos
+    }
 }

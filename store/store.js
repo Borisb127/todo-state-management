@@ -1,75 +1,13 @@
-const { createStore } = Redux
-import { userService } from '../services/user.service.js'
+const { createStore, combineReducers } = Redux
 
-const initialState = {
-    todos: [],
-    filterBy: { txt: '', importance: 0, status: 'all', sortBy: '', pageIdx: '' },
-    isLoading: false,
-    loggedinUser: userService.getLoggedinUser(),
-    doneTodos: 0,
-    totalTodos: 0,
-    maxPage: null,
-}
+import { todoReducer } from './reducers/todo.reducer.js'
+import { userReducer } from './reducers/user.reducer.js'
 
-export const SET_TODOS = 'SET_TODOS'
-export const REMOVE_TODO = 'REMOVE_TODO'
-export const ADD_TODO = 'ADD_TODO'
-export const UPDATE_TODO = 'UPDATE_TODO'
-export const SET_TODOS_STATS = 'SET_TODOS_STATS'
-export const SET_MAX_PAGE = 'SET_MAX_PAGE'
+const rootReducer = combineReducers({
+    todoModule: todoReducer,
+    userModule: userReducer,
+})
 
-export const SET_FILTER_BY = 'SET_FILTER_BY'
-
-export const SET_USER = 'SET_USER'
-export const SET_USER_BALANCE = 'SET_USER_BALANCE'
-
-export const SET_IS_LOADING = 'SET_IS_LOADING'
-
-
-
-
-function appReducer(state = initialState, cmd) {
-    switch (cmd.type) {
-        case SET_TODOS:
-            return { ...state, todos: cmd.todos }
-
-
-        case REMOVE_TODO:
-            var todos = state.todos.filter(todo => todo._id !== cmd.todoId)
-            return { ...state, todos }
-
-        case ADD_TODO:
-            var todos = [...state.todos, cmd.todo]
-            return { ...state, todos }
-
-        case UPDATE_TODO:
-            var todos = state.todos.map(todo => todo._id === cmd.todo._id ? cmd.todo : todo)
-            return { ...state, todos }
-
-        case SET_TODOS_STATS:
-            return { ...state, doneTodos: cmd.doneTodos, totalTodos: cmd.totalTodos }
-
-        case SET_MAX_PAGE:
-            return { ...state, maxPage: cmd.maxPage }
-
-        case SET_FILTER_BY:
-            return { ...state, filterBy: cmd.filterBy }
-
-        case SET_USER:
-            return { ...state, loggedinUser: cmd.loggedinUser }
-
-        case SET_USER_BALANCE:
-            const loggedinUser = { ...state.loggedinUser, balance: cmd.balance }
-            sessionStorage.setItem('user', JSON.stringify(loggedinUser))
-            return { ...state, loggedinUser }
-
-        case SET_IS_LOADING:
-            return { ...state, isLoading: cmd.isLoading }
-        default:
-            return state
-    }
-}
-
-export const store = createStore(appReducer)
+export const store = createStore(rootReducer)
 
 window.gStore = store
